@@ -1,0 +1,9 @@
+{
+  "uuid": "%uuid%",
+  "name": "SuperPay",
+  "description": "LabyMod Addon til SuperPay",
+  "mainClass": "com.hundeklemmen.superpay.Addon",
+  "version": 1.0,
+  "author": "SuperPay",
+  "category": 3
+}
