@@ -5,54 +5,110 @@ import com.google.gson.JsonObject;
 import com.hundeklemmen.superpay.Addon;
 import com.hundeklemmen.superpay.classes.WebSocketResponse;
 import net.minecraft.client.Minecraft;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.handshake.ServerHandshake;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import io.socket.engineio.client.transports.WebSocket;
 
-public class WebsocketHandler extends WebSocketClient {
+public class WebsocketHandler {
 
     private Addon addon;
     private URI serverURI;
+    private Socket socket;
 
-    public WebsocketHandler(Addon addon, URI serverURI) {
-        super(serverURI);
+    public WebsocketHandler(Addon addon) {
         this.addon = addon;
-        this.serverURI = serverURI;
     }
 
-    @Override
-    public void onOpen(ServerHandshake handshakedata) {
-        JsonObject obj = new JsonObject();
-        obj.addProperty("type", "connectiondata");
-        obj.addProperty("username", addon.getApi().getPlayerUsername());
-        obj.addProperty("uuid", addon.getApi().getPlayerUUID().toString());
-        send(obj.toString());
-        System.out.println("new connection opened");
-    }
+    private void connect(){
+        try {
+            IO.Options opts = new IO.Options();
+            opts.transports = new String[]{WebSocket.NAME};
+            opts.query = "authorization=" + addon.token;
+            if (addon.session != null) {
+                opts.query = "authorization=" + addon.token + "&session=" + addon.session;
+            }
+            socket = IO.socket(addon.websocketURL, opts);
+            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
 
-    @Override
-    public void onClose(int code, String reason, boolean remote) {
-        System.out.println("closed with exit code " + code + " additional info: " + reason);
-    }
+                @Override
+                public void call(Object... args) {
+                    Bukkit.getLogger().info("Connected to SuperPay Addon API");
+                }
 
-    @Override
-    public void onMessage(String message) {
-        WebSocketResponse response = new Gson().fromJson(message, WebSocketResponse.class);
-        System.out.println("Type: " + response.getType());
-    }
+            }).on("session", new Emitter.Listener() {
 
-    @Override
-    public void onMessage(ByteBuffer message) {
-        System.out.println("received ByteBuffer");
-    }
+                @Override
+                public void call(Object... args) {
+                    addon.session = args[0].toString();
+                }
 
-    @Override
-    public void onError(Exception ex) {
-        System.err.println("an error occurred:" + ex);
-    }
+            }).on("cmd", new Emitter.Listener() {
 
+                @Override
+                public void call(Object... args) {
+                    Bukkit.getScheduler().scheduleSyncDelayedTask(SuperPay.instance, new Runnable() {
+                        @Override
+                        public void run() {
+                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), args[0].toString());
+                        }
+                    }, 0);
+                }
+
+            }).on("checkpayment", new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    long now = new Date().getTime();
+                    SuperPay.lastCheck = now;
+                    Bukkit.getScheduler().runTaskAsynchronously(SuperPay.instance, new Runnable() {
+                        @Override
+                        public void run() {
+                            String svar = Utils.get("https://superpayapi.hundeklemmen.com/queue/" + authorization);
+                            if(svar.isEmpty()) return;
+                            Gson gson = new Gson();
+                            Type listType = new TypeToken<List<betaling>>(){}.getType();
+                            List<betaling> betalinger = gson.fromJson(svar, listType);
+
+                            Bukkit.getScheduler().scheduleSyncDelayedTask(SuperPay.instance, new Runnable() {
+                                @Override
+                                public void run() {
+                                    for (betaling betal : betalinger) {
+                                        Bukkit.getServer().getPluginManager().callEvent(
+                                                new betalingEvent(
+                                                        Bukkit.getOfflinePlayer(
+                                                                UUID.fromString(betal.getUuid())
+                                                        ),
+                                                        betal.getPakke(),
+                                                        betal.getAmount(),
+                                                        betal.get_id()
+                                                )
+                                        );
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            }).on("stop", new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Bukkit.getServer().shutdown();
+                }
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+                @Override
+                public void call(Object... args) {
+                    Bukkit.getLogger().warning("Disconnected from SuperPay");
+                }
+
+            });
+            socket.connect();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            this.connect();
+        }
+    }
 }

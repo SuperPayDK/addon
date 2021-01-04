@@ -27,21 +27,17 @@ public class Addon extends LabyModAddon {
 
     public boolean onSuperAwesome = false;
     public ServerData server;
+    public String session;
     private String token;
+    private WebsocketHandler websocketHandler;
+    public static String websocketURL = "https://superpayaddon.hundeklemmen.com:2087";
 
     @Override
     public void onEnable() {
         this.getApi().getEventManager().registerOnJoin(new JoinEvent(this));
         this.getApi().getEventManager().register(new onChat(this));
         this.getApi().registerModule(new EconomyModule(this));
-
-        try {
-
-            WebSocketClient client = new WebsocketHandler(this, new URI("ws://localhost:8887"));
-            client.connect();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        this.websocketHandler = new WebsocketHandler(this);
     }
 
 
@@ -72,13 +68,8 @@ public class Addon extends LabyModAddon {
         StringElement channelStringElement = new StringElement(
             "Token",
             new ControlElement.IconData( Material.PAPER ),
-            "Ooga Booga",
-            new Consumer<String>() {
-                @Override
-                public void accept( String accepted ) {
-                    System.out.println( "New value: " + accepted );
-                }
-            }
+            "",
+            this.token
         );
 
         subSettings.add( channelStringElement );
