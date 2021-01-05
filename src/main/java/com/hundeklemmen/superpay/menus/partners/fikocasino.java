@@ -1,4 +1,4 @@
-package com.hundeklemmen.superpay.menus;
+package com.hundeklemmen.superpay.menus.partners;
 
 import com.google.gson.JsonObject;
 import com.hundeklemmen.superpay.Addon;
@@ -14,14 +14,14 @@ import org.lwjgl.input.Keyboard;
 
 import java.io.IOException;
 
-public class AcceptMenu extends GuiScreen {
+public class fikocasino extends GuiScreen {
 
     private Scrollbar scrollbar = new Scrollbar(18);
     private TransactionRequest anmodning;
     private Addon addon;
     private Boolean interacted = false;
 
-    public AcceptMenu(TransactionRequest anmodning, Addon addon) {
+    public fikocasino(TransactionRequest anmodning, Addon addon) {
         this.anmodning = anmodning;
         this.addon = addon;
     }
@@ -90,18 +90,15 @@ public class AcceptMenu extends GuiScreen {
         double yPos = 45.0D + this.scrollbar.getScrollY() + 3.0D;
 
 
-        LabyMod.getInstance().getDrawUtils().drawCenteredString("§aSuperPay", this.width / 2, 20, 2);
+        LabyMod.getInstance().getDrawUtils().drawCenteredString("§aSuperPay§b + §aFikoCasino", this.width / 2, 20, 2);
 
         LabyMod.getInstance().getDrawUtils().drawCenteredString("§aØnsker du at godkende følgende transaktion? ", this.width / 2, 50, 1);
-        //Server
-        LabyMod.getInstance().getDrawUtils().drawRightString("§aServer:", this.width / 2 - 25, 100, 1);
-        LabyMod.getInstance().getDrawUtils().drawString("§b" + anmodning.getServer(), this.width / 2 + 25, 100, 1);
         //Pakke
-        LabyMod.getInstance().getDrawUtils().drawRightString("§aPakke:", this.width / 2 - 25, 125, 1);
-        LabyMod.getInstance().getDrawUtils().drawString("§b" + anmodning.getPakke(), this.width / 2 + 25, 125, 1);
+        LabyMod.getInstance().getDrawUtils().drawRightString("§aCoins:", this.width / 2 - 25, 105, 1);
+        LabyMod.getInstance().getDrawUtils().drawString("§b" + anmodning.getPakke(), this.width / 2 + 25, 105, 1);
         //Pris
-        LabyMod.getInstance().getDrawUtils().drawRightString("§aPris:", this.width / 2 - 25, 150, 1);
-        LabyMod.getInstance().getDrawUtils().drawString("§b" + Addon.decimalFormat.format(anmodning.getAmount()) + " Emeralder", this.width / 2 + 25, 150, 1);
+        LabyMod.getInstance().getDrawUtils().drawRightString("§aPris:", this.width / 2 - 25, 130, 1);
+        LabyMod.getInstance().getDrawUtils().drawString("§b" + Addon.decimalFormat.format(anmodning.getAmount()) + " Emeralder", this.width / 2 + 25, 130, 1);
         //LabyMod.getInstance().getDrawUtils().drawDynamicImageUrl("image", "https://stacket.dk/img/branding.c241aaa0.png", this.width / 2, this.height / 2, this.width / 3, this.height / 3, this.width / 3, this.height / 3);
 
         this.scrollbar.draw();

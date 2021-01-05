@@ -5,5 +5,6 @@
   "mainClass": "com.hundeklemmen.superpay.Addon",
   "version": 1.0,
   "author": "SuperPay",
-  "category": 3
+  "category": 3,
+  "icon": "https://github.com/SuperPayDK/assets/raw/main/icon64x64.png"
 }

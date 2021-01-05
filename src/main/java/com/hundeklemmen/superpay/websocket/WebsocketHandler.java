@@ -4,111 +4,77 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.hundeklemmen.superpay.Addon;
 import com.hundeklemmen.superpay.classes.WebSocketResponse;
+import com.hundeklemmen.superpay.menus.AcceptMenu;
+import com.hundeklemmen.superpay.menus.partners.fikocasino;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ChatComponentText;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
 
-import io.socket.client.IO;
-import io.socket.client.Socket;
-import io.socket.emitter.Emitter;
-import io.socket.engineio.client.transports.WebSocket;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 
-public class WebsocketHandler {
+public class WebsocketHandler extends WebSocketClient {
 
     private Addon addon;
     private URI serverURI;
-    private Socket socket;
+    private String rawURI;
 
-    public WebsocketHandler(Addon addon) {
+    public WebsocketHandler(Addon addon, String serverURI) throws URISyntaxException {
+        super(new URI(serverURI));
         this.addon = addon;
+        this.rawURI = serverURI;
+        this.serverURI = new URI(serverURI);
+        this.connect();
     }
 
-    private void connect(){
+    @Override
+    public void onOpen(ServerHandshake handshakedata) {
+        JsonObject obj = new JsonObject();
+        obj.addProperty("type", "playerdata");
+        obj.addProperty("username", addon.getApi().getPlayerUsername());
+        obj.addProperty("uuid", addon.getApi().getPlayerUUID().toString());
+        send(obj.toString());
+    }
+
+    @Override
+    public void onClose(int code, String reason, boolean remote) {
+        System.out.println("closed with exit code " + code + " additional info: " + reason);
         try {
-            IO.Options opts = new IO.Options();
-            opts.transports = new String[]{WebSocket.NAME};
-            opts.query = "authorization=" + addon.token;
-            if (addon.session != null) {
-                opts.query = "authorization=" + addon.token + "&session=" + addon.session;
-            }
-            socket = IO.socket(addon.websocketURL, opts);
-            socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {
-                    Bukkit.getLogger().info("Connected to SuperPay Addon API");
-                }
-
-            }).on("session", new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {
-                    addon.session = args[0].toString();
-                }
-
-            }).on("cmd", new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {
-                    Bukkit.getScheduler().scheduleSyncDelayedTask(SuperPay.instance, new Runnable() {
-                        @Override
-                        public void run() {
-                            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), args[0].toString());
-                        }
-                    }, 0);
-                }
-
-            }).on("checkpayment", new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {
-                    long now = new Date().getTime();
-                    SuperPay.lastCheck = now;
-                    Bukkit.getScheduler().runTaskAsynchronously(SuperPay.instance, new Runnable() {
-                        @Override
-                        public void run() {
-                            String svar = Utils.get("https://superpayapi.hundeklemmen.com/queue/" + authorization);
-                            if(svar.isEmpty()) return;
-                            Gson gson = new Gson();
-                            Type listType = new TypeToken<List<betaling>>(){}.getType();
-                            List<betaling> betalinger = gson.fromJson(svar, listType);
-
-                            Bukkit.getScheduler().scheduleSyncDelayedTask(SuperPay.instance, new Runnable() {
-                                @Override
-                                public void run() {
-                                    for (betaling betal : betalinger) {
-                                        Bukkit.getServer().getPluginManager().callEvent(
-                                                new betalingEvent(
-                                                        Bukkit.getOfflinePlayer(
-                                                                UUID.fromString(betal.getUuid())
-                                                        ),
-                                                        betal.getPakke(),
-                                                        betal.getAmount(),
-                                                        betal.get_id()
-                                                )
-                                        );
-                                    }
-                                }
-                            });
-                        }
-                    });
-                }
-            }).on("stop", new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {
-                    Bukkit.getServer().shutdown();
-                }
-            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
-
-                @Override
-                public void call(Object... args) {
-                    Bukkit.getLogger().warning("Disconnected from SuperPay");
-                }
-
-            });
-            socket.connect();
+            addon.websocketHandler = new WebsocketHandler(addon, this.rawURI);
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            this.connect();
         }
     }
+
+    @Override
+    public void onMessage(String message) {
+        WebSocketResponse response = new Gson().fromJson(message, WebSocketResponse.class);
+        if(response.getType().equalsIgnoreCase("anmodning") && addon.onSuperAwesome == true){
+            if(response.getAnmodning().getServer().equalsIgnoreCase("fikocasino")) {
+                Minecraft.getMinecraft().displayGuiScreen(new fikocasino(response.getAnmodning(), addon));
+                return;
+            }
+            Minecraft.getMinecraft().displayGuiScreen(new AcceptMenu(response.getAnmodning(), addon));
+        } else if(response.getType().equalsIgnoreCase("verification")){
+            addon.verified = response.getVerified();
+        } else if(response.getType().equalsIgnoreCase("balance")){
+            addon.balance = response.getBalance();
+        } else if(response.getType().equalsIgnoreCase("message")){
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r " + response.getMessage()));
+            addon.balance = response.getBalance();
+        }
+    }
+
+    @Override
+    public void onMessage(ByteBuffer message) {
+        System.out.println("received ByteBuffer");
+    }
+
+    @Override
+    public void onError(Exception ex) {
+        System.err.println("an error occurred:" + ex);
+    }
+
 }

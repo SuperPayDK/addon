@@ -10,10 +10,16 @@ public class WebSocketResponse {
     private String error;
 
     @Nullable
+    private String message;
+
+    @Nullable
     private double balance;
 
     @Nullable
     private TransactionRequest anmodning;
+
+    @Nullable
+    private boolean verified;
 
     public String getType(){
         return this.type;
@@ -23,5 +29,14 @@ public class WebSocketResponse {
     }
     public double getBalance(){
         return this.balance;
+    }
+    public TransactionRequest getAnmodning(){
+        return this.anmodning;
+    }
+    public boolean getVerified(){
+        return this.verified;
+    }
+    public String getMessage(){
+        return this.message;
     }
 }

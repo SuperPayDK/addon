@@ -25,7 +25,7 @@ public class EconomyModule extends SimpleModule {
 
     @Override
     public String getDisplayValue() {
-        return "0 Ems";
+        return this.addon.balance + " Ems";
     }
 
     @Override

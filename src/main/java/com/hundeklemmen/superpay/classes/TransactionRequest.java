@@ -17,6 +17,9 @@ public class TransactionRequest {
     public String getPakke(){
         return this.pakke;
     }
+    public String getServer(){
+        return this.server;
+    }
     public String getKey(){
         return this.key;
     }

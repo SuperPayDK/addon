@@ -1,5 +1,6 @@
 package com.hundeklemmen.superpay;
 
+import com.google.gson.JsonObject;
 import com.hundeklemmen.superpay.listeners.onChat;
 import com.hundeklemmen.superpay.modules.EconomyModule;
 import com.hundeklemmen.superpay.websocket.WebsocketHandler;
@@ -14,10 +15,10 @@ import net.labymod.utils.Material;
 
 import com.hundeklemmen.superpay.listeners.JoinEvent;
 import net.labymod.utils.ServerData;
-import org.java_websocket.client.WebSocketClient;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class Addon extends LabyModAddon {
@@ -28,16 +29,25 @@ public class Addon extends LabyModAddon {
     public boolean onSuperAwesome = false;
     public ServerData server;
     public String session;
-    private String token;
-    private WebsocketHandler websocketHandler;
-    public static String websocketURL = "https://superpayaddon.hundeklemmen.com:2087";
+    public String token;
+    public WebsocketHandler websocketHandler;
+    public static String websocketURL = "wss://superpayaddon.hundeklemmen.com:2087";
+    public static DecimalFormat decimalFormat = new DecimalFormat("###,###.###");
+    public boolean verified = false;
+    public double balance = 0.0;
 
     @Override
     public void onEnable() {
         this.getApi().getEventManager().registerOnJoin(new JoinEvent(this));
         this.getApi().getEventManager().register(new onChat(this));
         this.getApi().registerModule(new EconomyModule(this));
-        this.websocketHandler = new WebsocketHandler(this);
+
+        try {
+            this.websocketHandler = new WebsocketHandler(this, this.websocketURL);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        System.out.println("Connecting to API");
     }
 
 
@@ -46,7 +56,7 @@ public class Addon extends LabyModAddon {
      */
     @Override
     public void onDisable() {
-
+        this.websocketHandler.close();
     }
 
     /**
@@ -55,6 +65,14 @@ public class Addon extends LabyModAddon {
     @Override
     public void loadConfig() {
         this.token = getConfig().has( "token" ) ? getConfig().get( "token" ).getAsString() : "";
+        if(this.token.length() == 6) {
+            JsonObject verification = new JsonObject();
+            verification.addProperty("type", "verification");
+            verification.addProperty("token", token);
+            verification.addProperty("username", getApi().getPlayerUsername());
+            verification.addProperty("uuid", getApi().getPlayerUUID().toString());
+            websocketHandler.send(verification.toString());
+        }
     }
 
     /**
@@ -68,9 +86,23 @@ public class Addon extends LabyModAddon {
         StringElement channelStringElement = new StringElement(
             "Token",
             new ControlElement.IconData( Material.PAPER ),
-            "",
-            this.token
-        );
+                this.token,
+            new Consumer<String>() {
+                @Override
+                public void accept( String tokenStr ) {
+                    if(tokenStr.length() == 24) {
+                        System.out.println("New token: " + tokenStr);
+                        token = tokenStr;
+                        JsonObject verification = new JsonObject();
+                        verification.addProperty("type", "verification");
+                        verification.addProperty("token", token);
+                        verification.addProperty("username", getApi().getPlayerUsername());
+                        verification.addProperty("uuid", getApi().getPlayerUUID().toString());
+                        websocketHandler.send(verification.toString());
+                    }
+                }
+            }
+        ).maxLength(6);
 
         subSettings.add( channelStringElement );
 
