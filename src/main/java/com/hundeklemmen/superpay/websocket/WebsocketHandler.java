@@ -36,6 +36,15 @@ public class WebsocketHandler extends WebSocketClient {
         obj.addProperty("username", addon.getApi().getPlayerUsername());
         obj.addProperty("uuid", addon.getApi().getPlayerUUID().toString());
         send(obj.toString());
+
+        if(addon.token.length() == 24 && isClosed() == false) {
+            JsonObject verification = new JsonObject();
+            verification.addProperty("type", "verification");
+            verification.addProperty("token", addon.token);
+            verification.addProperty("username", addon.getApi().getPlayerUsername());
+            verification.addProperty("uuid", addon.getApi().getPlayerUUID().toString());
+            send(verification.toString());
+        }
     }
 
     @Override
@@ -59,6 +68,13 @@ public class WebsocketHandler extends WebSocketClient {
             Minecraft.getMinecraft().displayGuiScreen(new AcceptMenu(response.getAnmodning(), addon));
         } else if(response.getType().equalsIgnoreCase("verification")){
             addon.verified = response.getVerified();
+            if(addon.onSuperAwesome == true){
+                if(addon.verified == true) {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §aDu er nu autoriseret med SuperPay"));
+                } else {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §cFejl, kunne ikke autorisere dig med SuperPay!"));
+                }
+            }
         } else if(response.getType().equalsIgnoreCase("balance")){
             addon.balance = response.getBalance();
         } else if(response.getType().equalsIgnoreCase("message")){

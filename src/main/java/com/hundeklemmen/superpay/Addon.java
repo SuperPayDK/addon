@@ -1,22 +1,16 @@
 package com.hundeklemmen.superpay;
 
 import com.google.gson.JsonObject;
-import com.hundeklemmen.superpay.listeners.onChat;
 import com.hundeklemmen.superpay.modules.EconomyModule;
 import com.hundeklemmen.superpay.websocket.WebsocketHandler;
 import net.labymod.api.LabyModAddon;
-import net.labymod.api.events.MessageReceiveEvent;
-import net.labymod.settings.elements.BooleanElement;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.settings.elements.SettingsElement;
 import net.labymod.settings.elements.StringElement;
 import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
-
 import com.hundeklemmen.superpay.listeners.JoinEvent;
 import net.labymod.utils.ServerData;
-
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -39,7 +33,6 @@ public class Addon extends LabyModAddon {
     @Override
     public void onEnable() {
         this.getApi().getEventManager().registerOnJoin(new JoinEvent(this));
-        this.getApi().getEventManager().register(new onChat(this));
         this.getApi().registerModule(new EconomyModule(this));
 
         try {
@@ -65,14 +58,6 @@ public class Addon extends LabyModAddon {
     @Override
     public void loadConfig() {
         this.token = getConfig().has( "token" ) ? getConfig().get( "token" ).getAsString() : "";
-        if(this.token.length() == 6) {
-            JsonObject verification = new JsonObject();
-            verification.addProperty("type", "verification");
-            verification.addProperty("token", token);
-            verification.addProperty("username", getApi().getPlayerUsername());
-            verification.addProperty("uuid", getApi().getPlayerUUID().toString());
-            websocketHandler.send(verification.toString());
-        }
     }
 
     /**
@@ -93,6 +78,7 @@ public class Addon extends LabyModAddon {
                     if(tokenStr.length() == 24) {
                         System.out.println("New token: " + tokenStr);
                         token = tokenStr;
+                        getConfig().addProperty("token", token);
                         JsonObject verification = new JsonObject();
                         verification.addProperty("type", "verification");
                         verification.addProperty("token", token);
@@ -102,7 +88,7 @@ public class Addon extends LabyModAddon {
                     }
                 }
             }
-        ).maxLength(6);
+        ).maxLength(24);
 
         subSettings.add( channelStringElement );
 

@@ -1,5 +1,9 @@
-apply plugin: 'maven'
 // For those who want the bleeding edge
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
 buildscript {
     repositories {
         jcenter()
@@ -10,8 +14,6 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
-        // https://mvnrepository.com/artifact/io.socket/socket.io-client
-        classpath "org.java-websocket:Java-WebSocket:1.3.0"
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
@@ -40,28 +42,13 @@ minecraft {
 }
 
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
-    // except that these dependencies get remapped to your current MCP mappings
-    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    //https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket/1.3.0
+    embed files("libs/Java-WebSocket-1.5.1-with-dependencies (1).jar")
 }
+jar {
+    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
 
 processResources
 {
