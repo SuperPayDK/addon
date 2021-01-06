@@ -3,7 +3,7 @@
   "name": "SuperPay",
   "description": "This addon display the SuperPay balance and allows you to easily accept SuperPay transactions.",
   "mainClass": "com.hundeklemmen.superpay.Addon",
-  "version": 1.0,
+  "version": 1.1,
   "author": "SuperPay",
   "category": 3,
   "icon": "https://github.com/SuperPayDK/assets/raw/main/icon64x64.png"
