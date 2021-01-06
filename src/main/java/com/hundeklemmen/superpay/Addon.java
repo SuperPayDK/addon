@@ -79,12 +79,18 @@ public class Addon extends LabyModAddon {
                         System.out.println("New token: " + tokenStr);
                         token = tokenStr;
                         getConfig().addProperty("token", token);
-                        JsonObject verification = new JsonObject();
-                        verification.addProperty("type", "verification");
-                        verification.addProperty("token", token);
-                        verification.addProperty("username", getApi().getPlayerUsername());
-                        verification.addProperty("uuid", getApi().getPlayerUUID().toString());
-                        websocketHandler.send(verification.toString());
+                        if(websocketHandler.isClosed() == false) {
+                            try {
+                                JsonObject verification = new JsonObject();
+                                verification.addProperty("type", "verification");
+                                verification.addProperty("token", token);
+                                verification.addProperty("username", getApi().getPlayerUsername());
+                                verification.addProperty("uuid", getApi().getPlayerUUID().toString());
+                                websocketHandler.send(verification.toString());
+                            } catch (Exception e){
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
             }
