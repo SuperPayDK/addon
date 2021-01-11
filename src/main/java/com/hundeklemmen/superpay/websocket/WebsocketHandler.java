@@ -35,6 +35,7 @@ public class WebsocketHandler extends WebSocketClient {
         obj.addProperty("type", "playerdata");
         obj.addProperty("username", addon.getApi().getPlayerUsername());
         obj.addProperty("uuid", addon.getApi().getPlayerUUID().toString());
+        obj.addProperty("version", addon.SuperPayAddonVersion);
         send(obj.toString());
 
         if(addon.token.length() == 24 && isClosed() == false) {
@@ -43,6 +44,7 @@ public class WebsocketHandler extends WebSocketClient {
             verification.addProperty("token", addon.token);
             verification.addProperty("username", addon.getApi().getPlayerUsername());
             verification.addProperty("uuid", addon.getApi().getPlayerUUID().toString());
+            verification.addProperty("version", addon.SuperPayAddonVersion);
             send(verification.toString());
         }
     }
@@ -80,6 +82,8 @@ public class WebsocketHandler extends WebSocketClient {
         } else if(response.getType().equalsIgnoreCase("message")){
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r " + response.getMessage()));
             addon.balance = response.getBalance();
+        } else if(response.getType().equalsIgnoreCase("messageraw")){
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r " + response.getMessage()));
         }
     }
 

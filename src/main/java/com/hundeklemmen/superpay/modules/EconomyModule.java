@@ -1,6 +1,7 @@
 package com.hundeklemmen.superpay.modules;
 
 import com.hundeklemmen.superpay.Addon;
+import com.hundeklemmen.superpay.Utils;
 import net.labymod.ingamegui.Module;
 import net.labymod.ingamegui.ModuleCategory;
 import net.labymod.ingamegui.ModuleCategoryRegistry;
@@ -25,7 +26,7 @@ public class EconomyModule extends SimpleModule {
 
     @Override
     public String getDisplayValue() {
-        return this.addon.balance + " Ems";
+        return Utils.round(this.addon.balance, 2) + " Ems";
     }
 
     @Override

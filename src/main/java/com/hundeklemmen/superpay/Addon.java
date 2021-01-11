@@ -29,6 +29,7 @@ public class Addon extends LabyModAddon {
     public static DecimalFormat decimalFormat = new DecimalFormat("###,###.###");
     public boolean verified = false;
     public double balance = 0.0;
+    public static Integer SuperPayAddonVersion = 1;
 
     @Override
     public void onEnable() {
