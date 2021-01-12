@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 
@@ -106,8 +107,8 @@ public class AcceptMenu extends GuiScreen {
 
         this.scrollbar.draw();
 
+        Mouse.setGrabbed(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
-
     }
 
     @Override

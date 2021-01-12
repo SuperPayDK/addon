@@ -2,6 +2,8 @@ package com.hundeklemmen.superpay.classes;
 
 import jline.internal.Nullable;
 
+import java.util.List;
+
 public class WebSocketResponse {
 
     private String type;
@@ -17,6 +19,9 @@ public class WebSocketResponse {
 
     @Nullable
     private TransactionRequest anmodning;
+
+    @Nullable
+    private List<Server> serverlist;
 
     @Nullable
     private boolean verified;
@@ -38,5 +43,8 @@ public class WebSocketResponse {
     }
     public String getMessage(){
         return this.message;
+    }
+    public List<Server> getServerlist(){
+        return this.serverlist;
     }
 }

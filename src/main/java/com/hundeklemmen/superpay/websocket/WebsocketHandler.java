@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.hundeklemmen.superpay.Addon;
 import com.hundeklemmen.superpay.classes.WebSocketResponse;
 import com.hundeklemmen.superpay.menus.AcceptMenu;
+import com.hundeklemmen.superpay.menus.ServerList;
 import com.hundeklemmen.superpay.menus.partners.fikocasino;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
@@ -61,6 +62,7 @@ public class WebsocketHandler extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
+        System.out.println(message);
         WebSocketResponse response = new Gson().fromJson(message, WebSocketResponse.class);
         if(response.getType().equalsIgnoreCase("anmodning") && addon.onSuperAwesome == true){
             if(response.getAnmodning().getServer().equalsIgnoreCase("fikocasino")) {
@@ -84,6 +86,10 @@ public class WebsocketHandler extends WebSocketClient {
             addon.balance = response.getBalance();
         } else if(response.getType().equalsIgnoreCase("messageraw")){
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r " + response.getMessage()));
+        } else if(response.getType().equalsIgnoreCase("serverlist")){
+            System.out.println("ServerList View");
+            System.out.println("Server Amount: " + response.getServerlist().size());
+            Minecraft.getMinecraft().displayGuiScreen(new ServerList(response.getServerlist(), addon));
         }
     }
 

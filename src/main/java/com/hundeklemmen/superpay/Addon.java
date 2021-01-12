@@ -1,6 +1,7 @@
 package com.hundeklemmen.superpay;
 
 import com.google.gson.JsonObject;
+import com.hundeklemmen.superpay.listeners.commandEvent;
 import com.hundeklemmen.superpay.modules.EconomyModule;
 import com.hundeklemmen.superpay.websocket.WebsocketHandler;
 import net.labymod.api.LabyModAddon;
@@ -34,6 +35,7 @@ public class Addon extends LabyModAddon {
     @Override
     public void onEnable() {
         this.getApi().getEventManager().registerOnJoin(new JoinEvent(this));
+        this.getApi().getEventManager().register(new commandEvent(this));
         this.getApi().registerModule(new EconomyModule(this));
 
         try {

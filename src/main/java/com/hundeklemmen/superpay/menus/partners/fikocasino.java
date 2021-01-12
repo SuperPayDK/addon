@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 
@@ -102,9 +103,8 @@ public class fikocasino extends GuiScreen {
         //LabyMod.getInstance().getDrawUtils().drawDynamicImageUrl("image", "https://stacket.dk/img/branding.c241aaa0.png", this.width / 2, this.height / 2, this.width / 3, this.height / 3, this.width / 3, this.height / 3);
 
         this.scrollbar.draw();
-
+        Mouse.setGrabbed(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
-
     }
 
     @Override
