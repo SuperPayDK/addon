@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.Sys;
 
 public class JoinEvent implements Consumer<ServerData> {
 
@@ -27,6 +28,7 @@ public class JoinEvent implements Consumer<ServerData> {
         String ip = serverData.getIp().toLowerCase();
         if(Utils.containsIgnoreCase(ip, "superawesome.dk") || Utils.containsIgnoreCase(ip, "superawesomeminecraftserver.com")){
             this.addon.onSuperAwesome = true;
+            System.out.println("Verified: " + this.addon.verified);
             if(this.addon.verified == true) {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §aDu er nu autoriseret med SuperPay"));
 

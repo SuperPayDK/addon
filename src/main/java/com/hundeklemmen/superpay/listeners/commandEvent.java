@@ -16,7 +16,7 @@ public class commandEvent implements MessageSendEvent {
     }
     @Override
     public boolean onSend(String s) {
-        if(s.equalsIgnoreCase("/server")){
+        if(addon.onSuperAwesome && s.equalsIgnoreCase("/server")){
             System.out.println("Display GUI");
             JsonObject obj = new JsonObject();
             obj.addProperty("type", "serverlist_request");

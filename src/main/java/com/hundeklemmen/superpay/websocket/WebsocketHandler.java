@@ -53,11 +53,14 @@ public class WebsocketHandler extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         System.out.println("closed with exit code " + code + " additional info: " + reason);
-        try {
-            addon.websocketHandler = new WebsocketHandler(addon, this.rawURI);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        final WebsocketHandler localcache = this;
+        addon.verified = false;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                localcache.reconnect();
+            }
+        }).start();
     }
 
     @Override
