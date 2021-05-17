@@ -2,14 +2,11 @@ package com.hundeklemmen.superpay.modules;
 
 import com.hundeklemmen.superpay.Addon;
 import com.hundeklemmen.superpay.Utils;
-import net.labymod.ingamegui.Module;
 import net.labymod.ingamegui.ModuleCategory;
 import net.labymod.ingamegui.ModuleCategoryRegistry;
 import net.labymod.ingamegui.moduletypes.SimpleModule;
 import net.labymod.settings.elements.ControlElement;
 import net.labymod.utils.Material;
-import net.labymod.utils.ModColor;
-import net.minecraft.client.gui.Gui;
 
 public class EconomyModule extends SimpleModule {
 

@@ -34,8 +34,8 @@ public class Addon extends LabyModAddon {
 
     @Override
     public void onEnable() {
-        this.getApi().getEventManager().registerOnJoin(new JoinEvent(this));
-        this.getApi().getEventManager().register(new commandEvent(this));
+        this.getApi().getEventService().registerListener(new JoinEvent(this));
+        this.getApi().getEventService().registerListener(new commandEvent(this));
         this.getApi().registerModule(new EconomyModule(this));
 
         try {
@@ -46,14 +46,6 @@ public class Addon extends LabyModAddon {
         System.out.println("Connecting to API");
     }
 
-
-    /**
-     * Called when the addon gets disabled
-     */
-    @Override
-    public void onDisable() {
-        this.websocketHandler.close();
-    }
 
     /**
      * Called when this addon's config was loaded and is ready to use

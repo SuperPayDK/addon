@@ -7,8 +7,8 @@ import com.hundeklemmen.superpay.classes.WebSocketResponse;
 import com.hundeklemmen.superpay.menus.AcceptMenu;
 import com.hundeklemmen.superpay.menus.ServerList;
 import com.hundeklemmen.superpay.menus.partners.fikocasino;
+import net.labymod.core.LabyModCore;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -69,30 +69,30 @@ public class WebsocketHandler extends WebSocketClient {
         WebSocketResponse response = new Gson().fromJson(message, WebSocketResponse.class);
         if(response.getType().equalsIgnoreCase("anmodning") && addon.onSuperAwesome == true){
             if(response.getAnmodning().getServer().equalsIgnoreCase("fikocasino")) {
-                Minecraft.getMinecraft().displayGuiScreen(new fikocasino(response.getAnmodning(), addon));
+                Minecraft.getInstance().displayGuiScreen(new fikocasino(response.getAnmodning(), addon));
                 return;
             }
-            Minecraft.getMinecraft().displayGuiScreen(new AcceptMenu(response.getAnmodning(), addon));
+            Minecraft.getInstance().displayGuiScreen(new AcceptMenu(response.getAnmodning(), addon));
         } else if(response.getType().equalsIgnoreCase("verification")){
             addon.verified = response.getVerified();
             if(addon.onSuperAwesome == true){
                 if(addon.verified == true) {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §aDu er nu autoriseret med SuperPay"));
+                    addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r §aDu er nu autoriseret med SuperPay");
                 } else {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §cFejl, kunne ikke autorisere dig med SuperPay!"));
+                    addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r §cFejl, kunne ikke autorisere dig med SuperPay!");
                 }
             }
         } else if(response.getType().equalsIgnoreCase("balance")){
             addon.balance = response.getBalance();
         } else if(response.getType().equalsIgnoreCase("message")){
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r " + response.getMessage()));
+            addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r " + response.getMessage());
             addon.balance = response.getBalance();
         } else if(response.getType().equalsIgnoreCase("messageraw")){
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r " + response.getMessage()));
+            addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r " + response.getMessage());
         } else if(response.getType().equalsIgnoreCase("serverlist")){
             System.out.println("ServerList View");
             System.out.println("Server Amount: " + response.getServerlist().size());
-            Minecraft.getMinecraft().displayGuiScreen(new ServerList(response.getServerlist(), addon));
+            Minecraft.getInstance().displayGuiScreen(new ServerList(response.getServerlist(), addon));
         }
     }
 

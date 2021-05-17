@@ -2,27 +2,24 @@ package com.hundeklemmen.superpay.listeners;
 
 import com.google.gson.JsonObject;
 import com.hundeklemmen.superpay.Addon;
-import com.hundeklemmen.superpay.menus.ServerList;
-import net.labymod.api.events.MessageSendEvent;
-import net.minecraft.client.Minecraft;
+import net.labymod.api.event.Subscribe;
+import net.labymod.api.event.events.client.chat.MessageSendEvent;
 
-public class commandEvent implements MessageSendEvent {
-
+public class commandEvent {
 
     private Addon addon;
-
     public commandEvent(Addon addon) {
         this.addon = addon;
     }
-    @Override
-    public boolean onSend(String s) {
-        if(addon.onSuperAwesome && s.equalsIgnoreCase("/server")){
+
+    @Subscribe
+    public void onSend(MessageSendEvent event) {
+        if(addon.onSuperAwesome && event.getMessage().equalsIgnoreCase("/server")) {
             System.out.println("Display GUI");
             JsonObject obj = new JsonObject();
             obj.addProperty("type", "serverlist_request");
             this.addon.websocketHandler.send(obj.toString());
-            return true;
+            event.setCancelled(true);
         }
-        return false;
     }
 }

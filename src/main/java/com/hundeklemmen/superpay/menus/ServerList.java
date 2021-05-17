@@ -1,20 +1,21 @@
 package com.hundeklemmen.superpay.menus;
 
+import com.google.gson.JsonObject;
 import com.hundeklemmen.superpay.Addon;
 import com.hundeklemmen.superpay.classes.Server;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import net.labymod.gui.elements.Scrollbar;
 import net.labymod.main.LabyMod;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.text.StringTextComponent;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ServerList extends GuiScreen {
+public class ServerList extends Screen {
 
     private Scrollbar scrollbar = new Scrollbar(50);
     private Addon addon;
@@ -22,66 +23,23 @@ public class ServerList extends GuiScreen {
     private List<Server> serverList = new ArrayList<Server>(){};
 
     public ServerList(List<Server> serverList, Addon addon) {
+        super(new StringTextComponent("ServerList"));
         this.serverList = serverList;
         this.addon = addon;
     }
 
-    public void updateScreen() {
-
-    }
-
-    public void initGui() {
-        super.initGui();
+    public void init() {
+        super.init();
 
         this.scrollbar.init();
         this.scrollbar.setPosition(this.width / 2 + 122, 44, this.width / 2 + 126, this.height - 32 - 3);
 
-       // this.buttonList.add(new GuiButton(9914, this.width / 3, this.height - 75, this.width / 3, 20, "Accept"));
-       // this.buttonList.add(new GuiButton(9913, this.width / 3, this.height - 50, this.width / 3, 20, "Afvis"));
-
-
     }
-
-    /*
-     * Edited default onGuiClosed() method
-     */
-    public void onGuiClosed() {
-        // Default things
-        Keyboard.enableRepeatEvents(false);
-    }
-
-    /*
-     * edited function to handle button click
-     * partly copied
-     */
-    protected void actionPerformed(GuiButton button) throws IOException {
-        super.actionPerformed(button);
-
-
-        //Accepter
-        if(button.id == 9914){
-            System.out.println("Rolf");
-        }
-        //Afvis
-        else if(button.id == 9913){
-            System.out.println("Rolf");
-        }
-        interacted = true;
-        Minecraft.getMinecraft().thePlayer.closeScreen();
-        System.out.println("Rolf");
-
-    }
-
-    /*
-     * edited default drawscreen method
-     */
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        LabyMod.getInstance().getDrawUtils().drawAutoDimmedBackground(this.scrollbar.getScrollY());
+    @Override
+    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        LabyMod.getInstance().getDrawUtils().drawAutoDimmedBackground(matrixStack, this.scrollbar.getScrollY());
         double yPos = 8.0D + this.scrollbar.getScrollY() + 3.0D;
-
-
-        LabyMod.getInstance().getDrawUtils().drawCenteredString("§aSuperPay §bServer Liste", this.width / 2, 20, 2);
-
+        drawCenteredString(matrixStack, this.font, "§aSuperPay §bServer Liste", this.width / 2, 20, 2);
         int Start = (int) yPos;
         for (Server server : serverList) {
             if (Start < 8) {
@@ -89,29 +47,26 @@ public class ServerList extends GuiScreen {
             } else {
                 Start += 50;
                 if(server.isPartner() == true){
-                    LabyMod.getInstance().getDrawUtils().drawImageUrl(server.getCustomImage(), this.width / 4, Start - 15, 255.0D, 255.0D, 32.0D, 32.0D);
-                    LabyMod.getInstance().getDrawUtils().drawString("§a" + capitalizeString(server.getName()), this.width / 3, Start-15.0D, 1.2);
-                    LabyMod.getInstance().getDrawUtils().drawRightString("§a" + server.getOnline() + "§b/§a" + server.getMax(), this.width / 2 + 115, Start-15.0D, 1.2);
-                    LabyMod.getInstance().getDrawUtils().drawString("§f" + server.getDescription1(), this.width / 3, Start-2.5D, 0.9);
-                    LabyMod.getInstance().getDrawUtils().drawString("§f" + server.getDescription2(), this.width / 3, Start+5.0D, 0.9);
+                    LabyMod.getInstance().getDrawUtils().drawImageUrl(matrixStack, server.getCustomImage(), this.width / 4, Start - 15, 255.0D, 255.0D, 32.0D, 32.0D);
+                    LabyMod.getInstance().getDrawUtils().drawString(matrixStack, "§a" + capitalizeString(server.getName()), this.width / 3, Start-15.0D, 1.2);
+                    LabyMod.getInstance().getDrawUtils().drawRightString(matrixStack, "§a" + server.getOnline() + "§b/§a" + server.getMax(), this.width / 2 + 115, Start-15.0D, 1.2);
+                    LabyMod.getInstance().getDrawUtils().drawString(matrixStack, "§f" + server.getDescription1(), this.width / 3, Start-2.5D, 0.9);
+                    LabyMod.getInstance().getDrawUtils().drawString(matrixStack, "§f" + server.getDescription2(), this.width / 3, Start+5.0D, 0.9);
                 } else {
-                    LabyMod.getInstance().getDrawUtils().drawImageUrl("https://crafatar.com/avatars/" + server.getOwner() + "?size=32&overlay=true", this.width / 4, Start - 15, 255.0D, 255.0D, 32.0D, 32.0D);
-                    LabyMod.getInstance().getDrawUtils().drawString("§f" + capitalizeString(server.getName()), this.width / 3, Start - 15.0D, 1.2);
-                    LabyMod.getInstance().getDrawUtils().drawRightString("§7" + server.getOnline() + "/" + server.getMax(), this.width / 2 + 115, Start - 15.0D, 1.2);
-                    LabyMod.getInstance().getDrawUtils().drawString("§7" + server.getDescription1(), this.width / 3, Start - 2.5D, 0.9);
-                    LabyMod.getInstance().getDrawUtils().drawString("§7" + server.getDescription2(), this.width / 3, Start + 5.0D, 0.9);
+                    LabyMod.getInstance().getDrawUtils().drawImageUrl(matrixStack, "https://crafatar.com/avatars/" + server.getOwner() + "?size=32&overlay=true", this.width / 4, Start - 15, 255.0D, 255.0D, 32.0D, 32.0D);
+                    LabyMod.getInstance().getDrawUtils().drawString(matrixStack, "§f" + capitalizeString(server.getName()), this.width / 3, Start - 15.0D, 1.2);
+                    LabyMod.getInstance().getDrawUtils().drawRightString(matrixStack, "§7" + server.getOnline() + "/" + server.getMax(), this.width / 2 + 115, Start - 15.0D, 1.2);
+                    LabyMod.getInstance().getDrawUtils().drawString(matrixStack, "§7" + server.getDescription1(), this.width / 3, Start - 2.5D, 0.9);
+                    LabyMod.getInstance().getDrawUtils().drawString(matrixStack, "§7" + server.getDescription2(), this.width / 3, Start + 5.0D, 0.9);
                 }
                 //42
 
             }
         }
-        //LabyMod.getInstance().getDrawUtils().drawDynamicImageUrl("image", "https://stacket.dk/img/branding.c241aaa0.png", this.width / 2, this.height / 2, this.width / 3, this.height / 3, this.width / 3, this.height / 3);
-
         this.scrollbar.update(serverList.size());
         this.scrollbar.draw();
-        Mouse.setGrabbed(false);
-        super.drawScreen(mouseX, mouseY, partialTicks);
 
+        super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
     public static String capitalizeString(String str) {
@@ -122,11 +77,15 @@ public class ServerList extends GuiScreen {
         return retStr;
     }
 
-    @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
+    public void onClose() {
 
-        this.scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.CLICKED);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        super.mouseClicked(mouseX, mouseY, button);
+
+        this.scrollbar.mouseAction((int) mouseX, (int) mouseY, Scrollbar.EnumMouseAction.CLICKED);
 
         System.out.println("Y: " + mouseY);
         double yPos = 8.0D + this.scrollbar.getScrollY() + 3.0D;
@@ -141,31 +100,15 @@ public class ServerList extends GuiScreen {
                 Integer realEnd = realStart + 32;
                 if(mouseY > realStart && mouseY < realEnd && mouseX > this.width / 4 && mouseX < this.width / 2 + 120){
                     System.out.println("REE: " + server.getName());
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/server " + server.getName());
+                    sendMessage("/server " + server.getName());
                 }
             }
         }
+        return true;
     }
-
     @Override
-    public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-
-        this.scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.DRAGGING);
-    }
-
-    @Override
-    public void mouseReleased(int mouseX, int mouseY, int state) {
-        this.scrollbar.mouseAction(mouseX, mouseY, Scrollbar.EnumMouseAction.RELEASED);
-
-        super.mouseReleased(mouseX, mouseY, state);
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-
-        this.scrollbar.mouseInput();
+    public void mouseMoved(double mouseX, double mouseY) {
+        this.scrollbar.mouseAction((int) mouseX, (int) mouseY, Scrollbar.EnumMouseAction.DRAGGING);
     }
 
 }
