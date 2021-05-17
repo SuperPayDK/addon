@@ -110,5 +110,10 @@ public class ServerList extends Screen {
     public void mouseMoved(double mouseX, double mouseY) {
         this.scrollbar.mouseAction((int) mouseX, (int) mouseY, Scrollbar.EnumMouseAction.DRAGGING);
     }
+    @Override
+    public boolean mouseReleased(double mouseX, double mouseY, int state) {
+        this.scrollbar.mouseAction((int) mouseX, (int) mouseY, Scrollbar.EnumMouseAction.RELEASED);
+        return true;
+    }
 
 }
