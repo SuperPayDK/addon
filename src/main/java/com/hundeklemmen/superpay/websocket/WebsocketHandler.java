@@ -8,7 +8,6 @@ import com.hundeklemmen.superpay.menus.AcceptMenu;
 import com.hundeklemmen.superpay.menus.ServerList;
 import com.hundeklemmen.superpay.menus.partners.fikocasino;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -77,18 +76,18 @@ public class WebsocketHandler extends WebSocketClient {
             addon.verified = response.getVerified();
             if(addon.onSuperAwesome == true){
                 if(addon.verified == true) {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §aDu er nu autoriseret med SuperPay"));
+                    addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r §aDu er nu autoriseret med SuperPay");
                 } else {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §cFejl, kunne ikke autorisere dig med SuperPay!"));
+                    addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r §cFejl, kunne ikke autorisere dig med SuperPay!");
                 }
             }
         } else if(response.getType().equalsIgnoreCase("balance")){
             addon.balance = response.getBalance();
         } else if(response.getType().equalsIgnoreCase("message")){
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r " + response.getMessage()));
+            addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r " + response.getMessage());
             addon.balance = response.getBalance();
         } else if(response.getType().equalsIgnoreCase("messageraw")){
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r " + response.getMessage()));
+            addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r " + response.getMessage());
         } else if(response.getType().equalsIgnoreCase("serverlist")){
             System.out.println("ServerList View");
             System.out.println("Server Amount: " + response.getServerlist().size());

@@ -6,12 +6,6 @@ import com.hundeklemmen.superpay.Utils;
 import net.labymod.utils.Consumer;
 import net.labymod.utils.ServerData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.Sys;
 
 public class JoinEvent implements Consumer<ServerData> {
 
@@ -30,7 +24,7 @@ public class JoinEvent implements Consumer<ServerData> {
             this.addon.onSuperAwesome = true;
             System.out.println("Verified: " + this.addon.verified);
             if(this.addon.verified == true) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §aDu er nu autoriseret med SuperPay"));
+                addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r §aDu er nu autoriseret med SuperPay");
 
                 JsonObject obj = new JsonObject();
                 obj.addProperty("type", "playerdata");
@@ -39,7 +33,7 @@ public class JoinEvent implements Consumer<ServerData> {
                 obj.addProperty("version", addon.SuperPayAddonVersion);
                 this.addon.websocketHandler.send(obj.toString());
             } else {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §cFejl, kunne ikke autorisere dig med SuperPay!"));
+                addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r §cFejl, kunne ikke autorisere dig med SuperPay!");
             }
         } else {
             this.addon.onSuperAwesome = false;

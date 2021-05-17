@@ -1,7 +1,6 @@
 package com.hundeklemmen.superpay.classes;
 
-import jline.internal.Nullable;
-
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class WebSocketResponse {

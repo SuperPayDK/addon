@@ -8,8 +8,6 @@ import net.labymod.main.LabyMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -55,7 +53,7 @@ public class fikocasino extends GuiScreen {
             responseObject.addProperty("key", anmodning.getKey());
             responseObject.addProperty("accepted", false);
             addon.websocketHandler.send(responseObject.toString());
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§8[§aSuperPay§8]§r §cDu har nu afvist købet af §4" + anmodning.getPakke() + " §cpå serveren §4" + anmodning.getServer()));
+            addon.getApi().displayMessageInChat("§8[§aSuperPay§8]§r §cDu har nu afvist købet af §4" + anmodning.getPakke() + " §cpå serveren §4" + anmodning.getServer());
         }
     }
 
@@ -78,7 +76,7 @@ public class fikocasino extends GuiScreen {
             responseObject.addProperty("accepted", false);
         }
         interacted = true;
-        Minecraft.getMinecraft().thePlayer.closeScreen();
+        Minecraft.getMinecraft().player.closeScreen();
         addon.websocketHandler.send(responseObject.toString());
 
     }

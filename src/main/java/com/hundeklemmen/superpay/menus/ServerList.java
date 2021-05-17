@@ -67,7 +67,7 @@ public class ServerList extends GuiScreen {
             System.out.println("Rolf");
         }
         interacted = true;
-        Minecraft.getMinecraft().thePlayer.closeScreen();
+        Minecraft.getMinecraft().player.closeScreen();
         System.out.println("Rolf");
 
     }
@@ -141,7 +141,7 @@ public class ServerList extends GuiScreen {
                 Integer realEnd = realStart + 32;
                 if(mouseY > realStart && mouseY < realEnd && mouseX > this.width / 4 && mouseX < this.width / 2 + 120){
                     System.out.println("REE: " + server.getName());
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/server " + server.getName());
+                    Minecraft.getMinecraft().player.sendChatMessage("/server " + server.getName());
                 }
             }
         }
