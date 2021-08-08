@@ -2,6 +2,7 @@ package com.hundeklemmen.superpay;
 
 import com.google.gson.JsonObject;
 import com.hundeklemmen.superpay.listeners.commandEvent;
+import com.hundeklemmen.superpay.listeners.onTick;
 import com.hundeklemmen.superpay.modules.EconomyModule;
 import com.hundeklemmen.superpay.websocket.WebsocketHandler;
 import net.labymod.api.LabyModAddon;
@@ -12,6 +13,8 @@ import net.labymod.utils.Consumer;
 import net.labymod.utils.Material;
 import com.hundeklemmen.superpay.listeners.JoinEvent;
 import net.labymod.utils.ServerData;
+import net.minecraft.client.gui.GuiScreen;
+
 import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -31,11 +34,13 @@ public class Addon extends LabyModAddon {
     public boolean verified = false;
     public double balance = 0.0;
     public static Integer SuperPayAddonVersion = 1;
+    public GuiScreen openedGuiNextTick;
 
     @Override
     public void onEnable() {
         this.getApi().getEventManager().registerOnJoin(new JoinEvent(this));
         this.getApi().getEventManager().register(new commandEvent(this));
+        this.getApi().registerForgeListener(new onTick(this));
         this.getApi().registerModule(new EconomyModule(this));
 
         try {

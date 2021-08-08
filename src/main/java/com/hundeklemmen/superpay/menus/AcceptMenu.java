@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -32,14 +31,13 @@ public class AcceptMenu extends GuiScreen {
     }
 
     public void initGui() {
-        super.initGui();
+        this.buttonList.clear();
 
         this.scrollbar.init();
         this.scrollbar.setPosition(this.width / 2 + 122, 44, this.width / 2 + 126, this.height - 32 - 3);
 
         this.buttonList.add(new GuiButton(9914, this.width / 3, this.height - 75, this.width / 3, 20, "Accept"));
         this.buttonList.add(new GuiButton(9913, this.width / 3, this.height - 50, this.width / 3, 20, "Afvis"));
-
 
     }
 

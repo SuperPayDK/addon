@@ -6,7 +6,6 @@ import com.hundeklemmen.superpay.Addon;
 import com.hundeklemmen.superpay.classes.WebSocketResponse;
 import com.hundeklemmen.superpay.menus.AcceptMenu;
 import com.hundeklemmen.superpay.menus.ServerList;
-import com.hundeklemmen.superpay.menus.partners.fikocasino;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import org.java_websocket.client.WebSocketClient;
@@ -68,11 +67,7 @@ public class WebsocketHandler extends WebSocketClient {
         System.out.println(message);
         WebSocketResponse response = new Gson().fromJson(message, WebSocketResponse.class);
         if(response.getType().equalsIgnoreCase("anmodning") && addon.onSuperAwesome == true){
-            if(response.getAnmodning().getServer().equalsIgnoreCase("fikocasino")) {
-                Minecraft.getMinecraft().displayGuiScreen(new fikocasino(response.getAnmodning(), addon));
-                return;
-            }
-            Minecraft.getMinecraft().displayGuiScreen(new AcceptMenu(response.getAnmodning(), addon));
+            addon.openedGuiNextTick = new AcceptMenu(response.getAnmodning(),addon);
         } else if(response.getType().equalsIgnoreCase("verification")){
             addon.verified = response.getVerified();
             if(addon.onSuperAwesome == true){
@@ -92,7 +87,7 @@ public class WebsocketHandler extends WebSocketClient {
         } else if(response.getType().equalsIgnoreCase("serverlist")){
             System.out.println("ServerList View");
             System.out.println("Server Amount: " + response.getServerlist().size());
-            Minecraft.getMinecraft().displayGuiScreen(new ServerList(response.getServerlist(), addon));
+            addon.openedGuiNextTick = new ServerList(response.getServerlist(), addon);
         }
     }
 

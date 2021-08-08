@@ -109,7 +109,6 @@ public class ServerList extends GuiScreen {
 
         this.scrollbar.update(serverList.size());
         this.scrollbar.draw();
-        Mouse.setGrabbed(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
 
     }
