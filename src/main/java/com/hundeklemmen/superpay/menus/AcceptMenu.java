@@ -106,8 +106,6 @@ public class AcceptMenu extends GuiScreen {
         //LabyMod.getInstance().getDrawUtils().drawDynamicImageUrl("image", "https://stacket.dk/img/branding.c241aaa0.png", this.width / 2, this.height / 2, this.width / 3, this.height / 3, this.width / 3, this.height / 3);
 
         this.scrollbar.draw();
-
-        Mouse.setGrabbed(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -135,7 +133,6 @@ public class AcceptMenu extends GuiScreen {
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
-
         this.scrollbar.mouseInput();
     }
 
